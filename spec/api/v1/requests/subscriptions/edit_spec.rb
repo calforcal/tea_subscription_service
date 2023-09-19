@@ -5,19 +5,19 @@ RSpec.describe "New Customer Subscription" do
     it "can create a new subscription for a customer" do
       customer = FactoryBot.create(:customer)
       tea = FactoryBot.create(:tea)
+      subscription = FactoryBot.create(:subscription, status: true, customer_id: customer.id, tea_id: tea.id)
 
-      expect(customer.subscriptions.count).to eq(0)
+      expect(subscription.status).to be(true)
 
+      headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json'}
       params = {
         "title": "Summer Tea",
         "price": 200.00,
-        "status": true,
+        "status": false,
         "frequency": "weekly",
         "tea_id": tea.id
       }
-
-      headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json'}
-      post api_v1_customer_subscriptions_path(customer, headers: headers, params: params)
+      patch api_v1_customer_subscription_path(customer, subscription, params: params, headers: headers)
 
       expect(response).to be_successful
       expect(response.status).to eq(201)
@@ -44,7 +44,7 @@ RSpec.describe "New Customer Subscription" do
       expect(attributes[:price]).to be_a Float
 
       expect(attributes).to have_key(:status)
-      expect(attributes[:status]).to be_an TrueClass || FalseClass
+      expect(attributes[:status]).to be_a(TrueClass).or be_a(FalseClass) 
 
       expect(attributes).to have_key(:frequency)
       expect(attributes[:frequency]).to be_a String
@@ -55,7 +55,7 @@ RSpec.describe "New Customer Subscription" do
       expect(attributes).to have_key(:customer_id)
       expect(attributes[:customer_id]).to be_an Integer
 
-      expect(customer.subscriptions.count).to eq(1)
+      expect(subscription.reload.status).to be(false)
     end
   end
 end
