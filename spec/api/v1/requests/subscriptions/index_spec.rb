@@ -19,6 +19,8 @@ RSpec.describe "Get All Subscriptions" do
       expect(parsed).to have_key(:data)
       expect(parsed[:data]).to be_an Array
 
+      expect(parsed[:data].count).to eq(2)
+
       parsed[:data].each do |element|
         expect(element).to be_a Hash
         expect(element).to have_key(:id)
