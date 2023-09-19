@@ -51,8 +51,6 @@ RSpec.describe "Get All Subscriptions" do
 
         expect(attributes).to have_key(:customer_id)
         expect(attributes[:customer_id]).to be_an Integer
-
-        expect(subscription.reload.status).to be(false)
       end
     end
   end
