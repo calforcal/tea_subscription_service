@@ -1,4 +1,27 @@
 class Api::V1::SubscriptionsController < ApplicationController
+  def index
+    customer = Customer.find(params[:customer_id])
+    subscriptions = customer.subscriptions
+    formatted_subscriptions = subscriptions.map do |subscription|
+      {
+        "id": subscription.id,
+        "type": "subscription",
+        "attributes": {
+          title: subscription.title,
+          price: subscription.price,
+          status: subscription.status,
+          frequency: subscription.frequency,
+          tea_id: subscription.tea_id,
+          customer_id: subscription.customer_id
+        }
+      }
+    end
+
+    render json: {
+      "data": formatted_subscriptions
+    }, status: 200
+  end
+
   def create
     customer = Customer.find(params[:customer_id])
     subscription = customer.subscriptions.create!(subscription_params)
