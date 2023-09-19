@@ -9,7 +9,7 @@ RSpec.describe "Get All Subscriptions" do
       subscription_1 = FactoryBot.create(:subscription, status: true, customer_id: customer.id, tea_id: tea_1.id)
       subscription_2 = FactoryBot.create(:subscription, status: false, customer_id: customer.id, tea_id: tea_2.id)
 
-      get api_v1_customer_subscription_path(customer)
+      get api_v1_customer_subscriptions_path(customer)
 
       expect(response).to be_successful
       expect(response.status).to eq(200)
