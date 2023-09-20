@@ -11,11 +11,7 @@ RSpec.describe "New Customer Subscription" do
 
       headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json'}
       params = {
-        "title": "Summer Tea",
-        "price": 200.00,
-        "status": false,
-        "frequency": "weekly",
-        "tea_id": tea.id
+        "status": false
       }
       patch api_v1_customer_subscription_path(customer, subscription, params: params, headers: headers)
 
@@ -56,6 +52,58 @@ RSpec.describe "New Customer Subscription" do
       expect(attributes[:customer_id]).to be_an Integer
 
       expect(subscription.reload.status).to be(false)
+    end
+  end
+
+  describe "sad paths" do
+    it "will return a 404 if customer ID is not found" do
+      customer = FactoryBot.create(:customer)
+      tea = FactoryBot.create(:tea)
+      subscription = FactoryBot.create(:subscription, status: true, customer_id: customer.id, tea_id: tea.id)
+
+      expect(subscription.status).to be(true)
+
+      params = {
+        "status": false
+      }
+
+      headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json'}
+      patch api_v1_customer_subscription_path(-1, subscription, headers: headers, params: params)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      parsed = JSON.parse(response.body, symbolize_names: true)
+
+      expect(parsed[:errors].first[:status]).to eq(404)
+      expect(parsed[:errors].first[:message]).to eq("Invalid request. Please try again.")
+
+      expect(subscription.reload.status).to be(true)
+    end
+
+    it "will return a 404 if Subscription ID is not found" do
+      customer = FactoryBot.create(:customer)
+      tea = FactoryBot.create(:tea)
+      subscription = FactoryBot.create(:subscription, status: true, customer_id: customer.id, tea_id: tea.id)
+
+      expect(subscription.status).to be(true)
+
+      params = {
+        "status": false
+      }
+
+      headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json'}
+      patch api_v1_customer_subscription_path(customer, -1, headers: headers, params: params)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      parsed = JSON.parse(response.body, symbolize_names: true)
+
+      expect(parsed[:errors].first[:status]).to eq(404)
+      expect(parsed[:errors].first[:message]).to eq("Invalid request. Please try again.")
+
+      expect(subscription.reload.status).to be(true)
     end
   end
 end
