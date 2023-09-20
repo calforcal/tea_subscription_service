@@ -87,5 +87,31 @@ RSpec.describe "New Customer Subscription" do
 
       expect(customer.subscriptions.count).to eq(0)
     end
+
+    it "will return a 404 if subscription params are incomplete" do
+      customer = FactoryBot.create(:customer)
+      tea = FactoryBot.create(:tea)
+
+      expect(customer.subscriptions.count).to eq(0)
+
+      params = {
+        "title": "Summer Tea",
+        "status": true,
+        "tea_id": tea.id
+      }
+
+      headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json'}
+      post api_v1_customer_subscriptions_path(-1, headers: headers, params: params)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      parsed = JSON.parse(response.body, symbolize_names: true)
+
+      expect(parsed[:errors].first[:status]).to eq(404)
+      expect(parsed[:errors].first[:message]).to eq("Invalid request. Please try again.")
+
+      expect(customer.subscriptions.count).to eq(0)
+    end
   end
 end
