@@ -54,4 +54,22 @@ RSpec.describe "Get All Subscriptions" do
       end
     end
   end
+
+  describe "sad paths" do
+    it "will return a 404 if customer ID is not found" do
+      customer = FactoryBot.create(:customer)
+      tea = FactoryBot.create(:tea)
+      subscription = FactoryBot.create(:subscription, status: true, customer_id: customer.id, tea_id: tea.id)
+
+      get api_v1_customer_subscriptions_path(-1)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      parsed = JSON.parse(response.body, symbolize_names: true)
+
+      expect(parsed[:errors].first[:status]).to eq(404)
+      expect(parsed[:errors].first[:message]).to eq("Invalid request. Please try again.")
+    end
+  end
 end
