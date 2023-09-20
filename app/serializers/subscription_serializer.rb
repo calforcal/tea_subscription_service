@@ -7,7 +7,7 @@ class SubscriptionSerializer
     {
       data: {
         "id": @subscriptions.id,
-        "type": "@subscriptions",
+        "type": "subscription",
         "attributes": {
           title: @subscriptions.title,
           price: @subscriptions.price,
