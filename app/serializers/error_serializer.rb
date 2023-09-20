@@ -3,11 +3,22 @@ class ErrorSerializer
     @error = error
   end
 
-  def serialize_json
+  def serialize_not_found
     {
       errors: [
         {
           status: 404,
+          message: "Invalid request. Please try again."
+        }
+      ]
+    }
+  end
+
+  def serialize_bad_request
+    {
+      errors: [
+        {
+          status: 400,
           message: "Invalid request. Please try again."
         }
       ]

@@ -1,8 +1,12 @@
 class ApplicationController < ActionController::API
-  rescue_from ActiveRecord::RecordInvalid, with: :error_response
-  rescue_from ActiveRecord::RecordNotFound, with: :error_response
+  rescue_from ActiveRecord::RecordInvalid, with: :bad_request
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
-  def error_response(error)
-    render json: ErrorSerializer.new(error).serialize_json, status: :not_found
+  def not_found(error)
+    render json: ErrorSerializer.new(error).serialize_not_found, status: :not_found
+  end
+
+  def bad_request(error)
+    render json: ErrorSerializer.new(error).serialize_bad_request, status: 400
   end
 end
