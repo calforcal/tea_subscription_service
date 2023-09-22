@@ -12,6 +12,11 @@ In your terminal run the following commands to clone the repositories:
           
      git clone git@github.com:calforcal/lunch_and_learn.git
 
+**Ruby and Rails Versions**
+
+    rails 7.0.8
+    ruby 3.2.2
+
 **Installing the Gems Locally**
 
      bundle install
